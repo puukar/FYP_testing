@@ -1,6 +1,8 @@
 ﻿from pathlib import Path
+from typing import Optional
 import sys
 import time
+import tempfile
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
@@ -14,6 +16,9 @@ if str(PROJ_ROOT) not in sys.path:
 
 try:
     from src.analysis.pipeline import run_full_analysis
+    from src.analysis.minhash_similarity import compare_resumes
+    from src.parsing.pdf_parser_improved import extract_text_from_pdf
+    from src.parsing.docx_parser import extract_text_from_docx
     from src.database import AuthService, ResumeRepository, SkillRepository, init_supabase
 except ImportError as e:
     st.error(f"Import error: {e}")
@@ -24,7 +29,7 @@ UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 st.set_page_config(
     page_title="AI Resume Analyzer Pro",
-    page_icon="ðŸŽ¯",
+    page_icon="🎯",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -936,7 +941,7 @@ def show_dashboard():
         </div>
         """, unsafe_allow_html=True)
 
-    tab1, tab2, tab3 = st.tabs(["Upload & Analyze", "My Resumes", "Analytics"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Upload & Analyze", "My Resumes", "Analytics", "Compare Resumes"])
 
     with tab1:
         st.markdown('<div class="content-card">', unsafe_allow_html=True)
@@ -951,6 +956,11 @@ def show_dashboard():
     with tab3:
         st.markdown('<div class="content-card">', unsafe_allow_html=True)
         show_analytics()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with tab4:
+        st.markdown('<div class="content-card">', unsafe_allow_html=True)
+        show_resume_comparison()
         st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div></div>', unsafe_allow_html=True)
@@ -1217,6 +1227,97 @@ def show_analytics():
     top_analyses['analysis_date'] = top_analyses['analysis_date'].dt.strftime('%Y-%m-%d')
     top_analyses.columns = ['Role', 'Match Score (%)', 'Date']
     st.dataframe(top_analyses, use_container_width=True, hide_index=True)
+
+def _extract_text_from_upload(uploaded_file) -> Optional[str]:
+    """
+    Save an uploaded file (pdf/docx/txt) to a temp path and run it through
+    the project's existing parsers, matching the same extraction logic
+    used by the main Upload & Analyze pipeline.
+    """
+    if uploaded_file is None:
+        return None
+
+    suffix = Path(uploaded_file.name).suffix.lower()
+
+    if suffix == ".txt":
+        return uploaded_file.read().decode("utf-8", errors="ignore")
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(uploaded_file.getbuffer())
+        tmp_path = tmp.name
+
+    try:
+        if suffix == ".pdf":
+            return extract_text_from_pdf(tmp_path)
+        elif suffix == ".docx":
+            return extract_text_from_docx(tmp_path)
+        else:
+            return None
+    finally:
+        Path(tmp_path).unlink(missing_ok=True)
+
+
+def _similarity_label(pct: float) -> tuple:
+    """Map a similarity percentage to a plain-language label and color class."""
+    if pct >= 70:
+        return "Very High — likely templated or copied", "warning-box"
+    elif pct >= 40:
+        return "High — significant shared wording", "warning-box"
+    elif pct >= 15:
+        return "Moderate — some overlapping content", "info-box"
+    else:
+        return "Low — largely distinct resumes", "success-box"
+
+
+def show_resume_comparison():
+    """Compare two resumes for overlap/templating using hand-implemented MinHash / Jaccard similarity."""
+    st.markdown('<div class="section-header">Compare Two Resumes</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-subtext">Check how similar or templated two resumes are — useful for spotting near-duplicate submissions or copied/boilerplate content.</div>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2, gap="large")
+
+    with col1:
+        st.markdown("**Resume A**")
+        file_a = st.file_uploader("Upload Resume A (.pdf, .docx, .txt)", type=["pdf", "docx", "txt"], key="cmp_file_a")
+        text_a = st.text_area("...or paste Resume A text", height=220, key="cmp_text_a")
+
+    with col2:
+        st.markdown("**Resume B**")
+        file_b = st.file_uploader("Upload Resume B (.pdf, .docx, .txt)", type=["pdf", "docx", "txt"], key="cmp_file_b")
+        text_b = st.text_area("...or paste Resume B text", height=220, key="cmp_text_b")
+
+    with st.expander("Advanced settings"):
+        st.caption("Lower shingle size = catches shared vocabulary/topics. Higher = only flags exact shared phrasing.")
+        num_perm = st.slider("Number of hash functions (permutations)", 16, 256, 128, step=16, key="cmp_num_perm")
+        k = st.slider("Shingle size (word k-gram)", 1, 6, 1, key="cmp_k")
+
+    if st.button("Compare Resumes", key="cmp_btn"):
+        with st.spinner("Extracting text..."):
+            extracted_a = _extract_text_from_upload(file_a)
+            extracted_b = _extract_text_from_upload(file_b)
+
+        resume_a = (extracted_a or text_a or "").strip()
+        resume_b = (extracted_b or text_b or "").strip()
+
+        if file_a is not None and not extracted_a:
+            st.markdown('<div class="warning-box">Could not extract text from Resume A. The file may be scanned/image-based, corrupted, or password-protected.</div>', unsafe_allow_html=True)
+            return
+
+        if file_b is not None and not extracted_b:
+            st.markdown('<div class="warning-box">Could not extract text from Resume B. The file may be scanned/image-based, corrupted, or password-protected.</div>', unsafe_allow_html=True)
+            return
+
+        if not resume_a or not resume_b:
+            st.markdown('<div class="warning-box">Please provide both resumes (upload a .pdf/.docx/.txt file or paste text) before comparing.</div>', unsafe_allow_html=True)
+            return
+
+        result = compare_resumes(resume_a, resume_b, num_perm=num_perm, k=k)
+        pct = result["estimated_jaccard"] * 100
+        label, css_class = _similarity_label(pct)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.metric("Resume Similarity", f"{pct:.1f}%")
+        st.markdown(f'<div class="{css_class}">{label}</div>', unsafe_allow_html=True)
 
 def show_footer():
     st.markdown("""
