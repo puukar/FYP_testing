@@ -19,7 +19,7 @@ try:
     from src.analysis.minhash_similarity import compare_resumes
     from src.parsing.pdf_parser_improved import extract_text_from_pdf
     from src.parsing.docx_parser import extract_text_from_docx
-    from src.database import AuthService, ResumeRepository, SkillRepository, init_supabase
+    from src.database import AuthService, ResumeRepository, init_supabase
 except ImportError as e:
     st.error(f"Import error: {e}")
     st.stop()
@@ -828,7 +828,7 @@ def init_session_state():
             init_supabase()
             st.session_state.auth_service = AuthService()
             st.session_state.resume_repo = ResumeRepository()
-            st.session_state.skill_repo = SkillRepository()
+           
         except Exception as e:
             st.error(f"Database connection error: {e}")
             st.stop()
