@@ -1310,25 +1310,21 @@ def show_resume_comparison():
     with col1:
         st.markdown("**Resume A**")
         file_a = st.file_uploader("Upload Resume A (.pdf, .docx, .txt)", type=["pdf", "docx", "txt"], key="cmp_file_a")
-        text_a = st.text_area("...or paste Resume A text", height=220, key="cmp_text_a")
 
     with col2:
         st.markdown("**Resume B**")
         file_b = st.file_uploader("Upload Resume B (.pdf, .docx, .txt)", type=["pdf", "docx", "txt"], key="cmp_file_b")
-        text_b = st.text_area("...or paste Resume B text", height=220, key="cmp_text_b")
 
-    with st.expander("Advanced settings"):
-        st.caption("Lower shingle size = catches shared vocabulary/topics. Higher = only flags exact shared phrasing.")
-        num_perm = st.slider("Number of hash functions (permutations)", 16, 256, 128, step=16, key="cmp_num_perm")
-        k = st.slider("Shingle size (word k-gram)", 1, 6, 1, key="cmp_k")
+    num_perm = 128
+    k = 1
 
     if st.button("Compare Resumes", key="cmp_btn"):
         with st.spinner("Extracting text..."):
             extracted_a = _extract_text_from_upload(file_a)
             extracted_b = _extract_text_from_upload(file_b)
 
-        resume_a = (extracted_a or text_a or "").strip()
-        resume_b = (extracted_b or text_b or "").strip()
+        resume_a = (extracted_a or "").strip()
+        resume_b = (extracted_b or "").strip()
 
         if file_a is not None and not extracted_a:
             st.markdown('<div class="warning-box">Could not extract text from Resume A. The file may be scanned/image-based, corrupted, or password-protected.</div>', unsafe_allow_html=True)
@@ -1339,7 +1335,7 @@ def show_resume_comparison():
             return
 
         if not resume_a or not resume_b:
-            st.markdown('<div class="warning-box">Please provide both resumes (upload a .pdf/.docx/.txt file or paste text) before comparing.</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">Please upload both resumes (.pdf, .docx, or .txt) before comparing.</div>', unsafe_allow_html=True)
             return
 
         result = compare_resumes(resume_a, resume_b, num_perm=num_perm, k=k)
