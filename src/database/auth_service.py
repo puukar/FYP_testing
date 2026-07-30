@@ -21,13 +21,20 @@ class AuthService:
             })
 
             if response.user:
+                existing_profile = self.client.table("users").select("id").eq("email", email).execute()
+                if existing_profile.data:
+                    return {
+                        "success": False,
+                        "message": "An account with this email already exists. Please sign in instead."
+                    }
+
                 user_data = {
                     "id": response.user.id,
                     "email": email,
                     "full_name": full_name or email.split('@')[0],
                     "auth_id": response.user.id
                 }
-                self.client.table("users").insert(user_data).execute()
+                self.client.table("users").upsert(user_data, on_conflict="id").execute()
 
                 return {
                     "success": True,
@@ -41,9 +48,16 @@ class AuthService:
                 }
 
         except Exception as e:
+            error_message = str(e).lower()
+            if "duplicate" in error_message or "already exists" in error_message:
+                return {
+                    "success": False,
+                    "message": "An account with this email already exists. Please sign in instead."
+                }
+
             return {
                 "success": False,
-                "message": f"Error: {str(e)}"
+                "message": "Unable to create account right now. Please try again."
             }
 
     def sign_in(self, email: str, password: str) -> Dict[str, Any]:

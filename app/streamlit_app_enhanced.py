@@ -41,27 +41,27 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
     :root {
-        --bg-main: #0c0f14;
-        --surface: rgba(22, 26, 33, 0.92);
-        --surface-strong: #181c24;
-        --border: rgba(238, 241, 244, 0.08);
-        --border-strong: rgba(238, 241, 244, 0.16);
-        --text-main: #eef1f4;
-        --text-soft: #9aa4b2;
-        --text-faint: #626d7a;
-        --brand: #f2a93c;
-        --brand-deep: #d6871f;
-        --accent: #4fd1c5;
-        --danger: #ef6461;
-        --danger-soft: rgba(239, 100, 97, 0.10);
-        --success: #4fd1c5;
-        --success-soft: rgba(79, 209, 197, 0.10);
-        --info: #6ea8d8;
-        --info-soft: rgba(110, 168, 216, 0.10);
-        --warning: #f2a93c;
-        --warning-soft: rgba(242, 169, 60, 0.10);
-        --shadow-soft: 0 30px 70px rgba(0, 0, 0, 0.45);
-        --shadow-card: 0 14px 32px rgba(0, 0, 0, 0.35);
+        --bg-main: #f7efe6;
+        --surface: rgba(255, 252, 247, 0.96);
+        --surface-strong: #fffdf9;
+        --border: rgba(31, 41, 55, 0.09);
+        --border-strong: rgba(31, 41, 55, 0.14);
+        --text-main: #1f2937;
+        --text-soft: #4b5563;
+        --text-faint: #6b7280;
+        --brand: #ff7a18;
+        --brand-deep: #de5f00;
+        --accent: #2f8fd8;
+        --danger: #e24d4d;
+        --danger-soft: rgba(226, 77, 77, 0.10);
+        --success: #1f9b7b;
+        --success-soft: rgba(31, 155, 123, 0.10);
+        --info: #3b82f6;
+        --info-soft: rgba(59, 130, 246, 0.10);
+        --warning: #f59e0b;
+        --warning-soft: rgba(245, 158, 11, 0.10);
+        --shadow-soft: 0 20px 45px rgba(15, 23, 42, 0.10);
+        --shadow-card: 0 12px 24px rgba(15, 23, 42, 0.08);
     }
 
     * {
@@ -70,7 +70,7 @@ st.markdown("""
 
     .stApp {
         color: var(--text-main);
-        background: var(--bg-main);
+        background: linear-gradient(135deg, #fff8ee 0%, #f4efe7 100%);
     }
 
     .stApp::before {
@@ -79,15 +79,15 @@ st.markdown("""
         inset: 0;
         pointer-events: none;
         background-image:
-            linear-gradient(rgba(242, 169, 60, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(242, 169, 60, 0.05) 1px, transparent 1px);
+            linear-gradient(rgba(255, 122, 24, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(47, 143, 216, 0.06) 1px, transparent 1px);
         background-size: 40px 40px;
-        mask-image: radial-gradient(circle at 20% 0%, rgba(0,0,0,0.5), transparent 60%);
+        mask-image: radial-gradient(circle at 20% 0%, rgba(0,0,0,0.35), transparent 60%);
         opacity: 1;
     }
 
     .block-container {
-        max-width: 1280px;
+        max-width: 1400px;
         padding-top: 2rem;
         padding-bottom: 1.5rem;
         position: relative;
@@ -97,17 +97,17 @@ st.markdown("""
     .page-shell {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 4px;
-        padding: 22px;
+        border-radius: 20px;
+        padding: 24px;
         box-shadow: var(--shadow-soft);
         backdrop-filter: blur(18px);
-        border-top: 2px solid var(--brand);
+        border-top: 3px solid var(--brand);
     }
 
     .auth-stage {
-        background: linear-gradient(180deg, #12161d 0%, #0c0f14 100%);
+        background: linear-gradient(180deg, #fffdf9 0%, #f8efe6 100%);
         border: 1px solid var(--border);
-        border-radius: 4px;
+        border-radius: 20px;
         padding: 34px;
         min-height: 100%;
         position: relative;
@@ -239,9 +239,9 @@ st.markdown("""
     }
 
     .hero-card {
-        background: linear-gradient(160deg, #171c24 0%, #0f1319 100%);
+        background: linear-gradient(160deg, #fffdf9 0%, #f8efe6 100%);
         border: 1px solid var(--border);
-        border-radius: 4px;
+        border-radius: 18px;
         padding: 32px;
         color: var(--text-main);
         min-height: 220px;
@@ -282,7 +282,7 @@ st.markdown("""
         font-weight: 700;
         margin: 0 0 14px 0;
         max-width: 580px;
-        color: #ffffff;
+        color: var(--brand-deep);
     }
 
     .hero-copy {
@@ -294,12 +294,12 @@ st.markdown("""
     }
 
     .hero-side-card {
-        background: #12161d;
-        border-radius: 4px;
+        background: linear-gradient(180deg, #fffdf9 0%, #f8efe6 100%);
+        border-radius: 18px;
         border: 1px solid var(--border);
         padding: 26px 24px;
         box-shadow: var(--shadow-card);
-        border-left: 2px solid var(--accent);
+        border-left: 3px solid var(--accent);
     }
 
     .hero-side-label {
@@ -400,15 +400,15 @@ st.markdown("""
 
     .login-form-shell,
     .content-card {
-        background: rgba(22, 26, 33, 0.9);
-        border-radius: 4px;
+        background: rgba(255, 252, 247, 0.95);
+        border-radius: 18px;
         padding: 24px;
         border: 1px solid var(--border);
         box-shadow: var(--shadow-card);
     }
 
     .login-form-shell {
-        background: linear-gradient(180deg, #181c24 0%, #12161d 100%);
+        background: linear-gradient(180deg, #fffdf9 0%, #f8efe6 100%);
         padding: 30px;
         position: relative;
         overflow: hidden;
@@ -458,17 +458,21 @@ st.markdown("""
     }
 
     .stat-card {
-        background: #161a21;
+        background: linear-gradient(180deg, #fffdf9 0%, #fdf6eb 100%);
         padding: 22px;
-        border-radius: 4px;
+        border-radius: 16px;
         min-height: 168px;
         color: var(--text-main);
         box-shadow: var(--shadow-card);
-        transition: border-color 0.2s ease;
+        transition: border-color 0.2s ease, transform 0.2s ease;
         border: 1px solid var(--border);
-        border-top: 2px solid var(--brand);
+        border-top: 3px solid var(--brand);
         position: relative;
         overflow: hidden;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
     }
 
     .stat-card:hover {
@@ -503,7 +507,7 @@ st.markdown("""
         font-family: 'Space Grotesk', sans-serif;
         font-size: 1.2rem;
         font-weight: 700;
-        color: var(--text-main);
+        color: var(--brand);
         margin: 0 0 8px 0;
         letter-spacing: -0.01em;
         border: none;
@@ -520,14 +524,14 @@ st.markdown("""
         background: transparent;
         color: var(--brand);
         border: 1px solid var(--brand);
-        border-radius: 2px;
-        padding: 0.84rem 1.2rem;
+        border-radius: 999px;
+        padding: 0.82rem 1.2rem;
         font-family: 'IBM Plex Mono', monospace;
         font-weight: 600;
-        font-size: 0.86rem;
+        font-size: 0.84rem;
         text-transform: uppercase;
         letter-spacing: 0.06em;
-        transition: background 0.15s ease, color 0.15s ease;
+        transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
         box-shadow: none;
         min-height: 3rem;
         width: 100%;
@@ -535,7 +539,8 @@ st.markdown("""
 
     .stButton > button:hover {
         background: var(--brand);
-        color: #0c0f14;
+        color: #ffffff;
+        transform: translateY(-1px);
     }
 
     .stTabs [data-baseweb="tab-list"] {
@@ -577,30 +582,56 @@ st.markdown("""
     }
 
     .stTextInput > div > div > input {
-        border-radius: 2px;
+        border-radius: 12px;
         border: 1px solid var(--border-strong);
-        background: #12161d;
+        background: var(--surface-strong);
         color: var(--text-main);
         padding: 14px 16px;
         font-size: 0.98rem;
+        min-height: 48px;
+        line-height: 1.4;
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
     }
 
     .stTextInput > div > div > input:focus {
         border-color: var(--brand);
-        box-shadow: 0 0 0 1px rgba(242, 169, 60, 0.3);
+        box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.16);
+    }
+
+    .stTextArea > div > div > textarea {
+        border-radius: 12px;
+        border: 1px solid var(--border-strong);
+        background: var(--surface-strong);
+        color: var(--text-main);
+        padding: 14px 16px;
+        font-size: 0.98rem;
+        min-height: 140px;
+        line-height: 1.5;
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .stTextArea > div > div > textarea:focus {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.16);
+    }
+
+    [data-testid="stTextInputInstructions"],
+    [data-testid="stTextAreaInstructions"] {
+        display: none !important;
     }
 
     .stSelectbox > div > div {
-        border-radius: 2px;
+        border-radius: 12px;
         border: 1px solid var(--border-strong);
-        background: #12161d;
+        background: var(--surface-strong);
+        min-height: 48px;
     }
 
     [data-testid="stFileUploaderDropzone"] {
-        background: #12161d;
+        background: linear-gradient(135deg, #fffdf9 0%, #f8f0e6 100%);
         border: 1.5px dashed var(--border-strong);
-        border-radius: 4px;
-        padding: 18px;
+        border-radius: 14px;
+        padding: 22px;
     }
 
     [data-testid="stFileUploaderDropzone"]:hover {
@@ -673,18 +704,18 @@ st.markdown("""
     }
 
     [data-testid="stExpander"] {
-        border: 1px solid var(--border);
-        border-radius: 4px;
-        background: #12161d;
-        box-shadow: none;
+        border: 1px solid rgba(255, 122, 24, 0.18);
+        border-radius: 14px;
+        background: linear-gradient(180deg, #fffdf9 0%, #f8efe6 100%);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
         overflow: hidden;
     }
 
     .streamlit-expanderHeader {
         background: transparent;
         border-radius: 0;
-        font-weight: 600;
-        color: var(--text-main);
+        font-weight: 700;
+        color: var(--brand-deep);
     }
 
     [data-testid="stMetric"] {
@@ -1326,27 +1357,27 @@ def show_footer():
             width: 100%;
             margin-top: 40px;
             padding: 24px 28px;
-            background: #12161d;
-            border: 1px solid rgba(238, 241, 244, 0.08);
-            border-radius: 4px 4px 0 0;
-            box-shadow: none;
+            background: linear-gradient(135deg, #fff8ed 0%, #f4ebdc 100%);
+            border: 1px solid rgba(255, 122, 24, 0.16);
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
             text-align: center;
         }
 
         .footer a {
-            color: #f2a93c;
+            color: var(--brand-deep);
             text-decoration: none;
             font-weight: 600;
             margin: 0 10px;
         }
 
         .footer a:hover {
-            color: #4fd1c5;
+            color: var(--accent);
         }
 
         .footer p {
             margin: 6px 0;
-            color: #9aa4b2;
+            color: var(--text-soft);
             font-family: 'IBM Plex Mono', monospace;
             font-size: 0.85rem;
         }
